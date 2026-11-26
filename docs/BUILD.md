@@ -6,6 +6,26 @@
 - git and curl.
 - Much time, memory and disk. Refer to the estimate below.
 
+## Windows
+
+The longest path in the tree has 244 characters, under `lean/src/Development/WeilBound/`. With the clone directory in front of it, many paths pass the Windows limit of 260 characters. Git for Windows then fails to write those files. In one test the clone stopped with 604 of the 174,793 `.lean` files on disk, and `git status` showed the rest as deleted.
+
+Turn on long paths before the checkout:
+
+```sh
+git clone -c core.longpaths=true https://github.com/tamnd/riemann-lean.git
+```
+
+If a clone already failed, repair it in place:
+
+```sh
+git config core.longpaths true
+git restore --source=HEAD :/
+git reset
+```
+
+Use a short parent directory, such as `C:\src`, to keep a margin. Other tools that read the tree can have the same limit. Python, for example, needs the `\\?\` prefix or the `LongPathsEnabled` registry setting. We did not test Lake or Lean on Windows with these paths.
+
 ## Steps
 
 ```sh
